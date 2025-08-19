@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product - Kikitech Supplies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f4fdfc, #e0f7f4);
+            color: #333;
+            animation: fadeInBody 1s ease-in;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 60px;
+            background: linear-gradient(90deg, #4e54c8, #8f94fb);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .navbar a {
+            color: #fff;
+            font-size: 16px;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #ffd700;
+        }
+
+        /* Container adjusted below navbar */
+        .container {
+            max-width: 700px;
+            margin: 80px auto 50px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            animation: slideUp 1s ease-out;
+        }
+
+        h1 {
+            color: #007b5e;
+            font-size: 2.4em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .tagline {
+            font-style: italic;
+            color: #555;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .contact {
+            font-size: 0.95em;
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #007b5e;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        button[type="submit"] {
+            padding: 12px;
+            background-color: #007b5e;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button[type="submit"] i {
+            animation: bounceIcon 2s infinite;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #005f4a;
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeInBody {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes bounceIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* Responsive Navbar */
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+            }
+            .navbar a {
+                margin: 5px 0;
+                font-size: 18px;
+            }
+            .container {
+                padding: 20px;
+                margin: 100px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="navbar">
+        <div class="navbar-left">
+            {% if session['role'] == 'admin' %}
+                <a href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+            {% elif session['role'] == 'user' %}
+                <a href="{{ url_for('mydashboard') }}"><i class="fas fa-user"></i> My Dashboard</a>
+            {% endif %}
+        </div>
+        <div class="navbar-right">
+            <a href="{{ url_for('view_products') }}"><i class="fas fa-boxes"></i> View Products</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Kikitech Supplies</h1>
+        <p class="tagline">"Let's glam your house"</p>
+        <p class="contact"><i class="fas fa-phone"></i> +254796813752 &nbsp; | &nbsp; <i class="fas fa-envelope"></i> info@kikitechsupplies.co.ke</p>
+
+        <h2>Add New Product</h2>
+        <form method="POST">
+            <label for="name">Product Name:</label>
+            <input type="text" name="name" required>
+
+            <label for="description">Description:</label>
+            <input type="text" name="description" required>
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" required>
+
+            <button type="submit"><i class="fas fa-save"></i> Save Product</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Today's Sales - Kikitech Supplies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 20px;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            margin-bottom: 8px;
+        }
+        .header h1 {
+            margin: 5px 0;
+            color: #2c3e50;
+            font-size: 28px;
+        }
+        .subtitle {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        /* Top buttons */
+        .top-buttons {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .top-buttons a, 
+        .top-buttons button {
+            margin: 0 10px;
+            padding: 10px 18px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .top-buttons a:hover, 
+        .top-buttons button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Totals */
+        h3 {
+            margin-top: 30px;
+            color: #34495e;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #2c3e50;
+        }
+        .receipt-link {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-left: 12px;
+        }
+        .receipt-link:hover {
+            background: #2980b9;
+        }
+        .grand-total {
+            text-align: right;
+            font-size: 1.2rem;
+            margin-top: 40px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        hr {
+            margin-top: 30px;
+            border: 0;
+            height: 1px;
+            background: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Branded Header -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Kikitech Supplies Logo">
+        <h1>Kikitech Supplies</h1>
+        <div class="subtitle">"Let's glam your House"</div>
+    </div>
+
+    <!-- Top navigation buttons -->
+    <div class="top-buttons">
+        <a href="{{ url_for('dashboard') }}">🏠 Dashboard</a>
+        <button onclick="window.print()">🖨️ Print</button>
+    </div>
+
+    {% if grouped_sales %}
+        {% for order_id, sale in grouped_sales.items() %}
+            <h3>🧾 Customer: {{ sale["customer_name"] }} | 💳 Payment: {{ sale["payment_mode"] }} | 🕒 Time: {{ sale["date"] }}</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>📦 Product (Description)</th>
+                        <th>🔢 Qty</th>
+                        <th>💰 Unit Price</th>
+                        <th>🧮 Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in sale["items"] %}
+                    <tr>
+                        <td>{{ item["product_name"] }} ({{ item["description"] }})</td>
+                        <td>{{ item["quantity"] }}</td>
+                        <td>KSh {{ '%.2f'|format(item["price"]) }}</td>
+                        <td>KSh {{ '%.2f'|format(item["quantity"] * item["price"]) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="total">
+                Total: KSh {{ '%.2f'|format(sale["total_amount"]) }}
+                <a class="receipt-link" href="{{ url_for('receipt', order_id=order_id) }}">🧾 View Receipt</a>
+            </div>
+            <hr>
+        {% endfor %}
+        <div class="grand-total">
+            📊 Grand Total for Today: <strong>KSh {{ '%.2f'|format(grand_total) }}</strong>
+        </div>
+    {% else %}
+        <p style="text-align:center; font-style: italic; margin-top: 50px;">No sales recorded today.</p>
+    {% endif %}
+
+</body>
+</html>

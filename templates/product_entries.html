@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Product Entries - Kikitech Supplies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #2c5364, #1f4037);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            color: #fff;
+        }
+
+        /* Gradient Animation */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1); /* glass effect */
+            backdrop-filter: blur(20px);
+            border-radius: 18px;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px 25px;
+        }
+
+        /* --- Top Navigation Buttons --- */
+        .top-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .top-buttons a, .top-buttons button {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .top-buttons a:hover, .top-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(22, 160, 133, 0.5);
+        }
+
+        /* Branding */
+        .branding {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .branding img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+            background: #fff;
+        }
+        .branding h1 {
+            color: #f8f9fa;
+            margin: 12px 0 0;
+            font-size: 2.2em;
+            font-weight: 700;
+            text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+        }
+        .branding .tagline {
+            font-style: italic;
+            color: #f1f1f1;
+            margin: 6px 0 0;
+            font-size: 1.1em;
+        }
+
+        .contact {
+            font-size: 0.95em;
+            color: #e0e0e0;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+      /* --- Table (Dark Theme) --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1em;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #1e1e1e;   /* Dark base */
+    color: #f5f5f5;        /* Light text */
+}
+thead tr {
+    background: linear-gradient(135deg, #1abc9c, #16a085); /* Kikitech green */
+    color: white;
+}
+th, td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #333;
+}
+tbody tr:nth-child(even) {
+    background-color: #2a2a2a;
+}
+tbody tr:hover {
+    background-color: #333;
+}
+/* Filter form container - frosted glass bar */
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    border-radius: 14px;
+    padding: 15px 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+/* Inputs inside filter */
+.filter-form input {
+    flex: 1;  /* take available space */
+    min-width: 200px;
+    padding: 12px 16px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.filter-form input::placeholder {
+    color: #ddd;
+}
+
+.filter-form input:focus {
+    outline: none;
+    background: rgba(255,255,255,0.25);
+    border-color: #1abc9c;
+}
+
+/* Button styled to match */
+.filter-form button {
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #1abc9c, #16a085);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(26,188,156,0.4);
+    transition: 0.3s ease;
+}
+
+.filter-form button:hover {
+    background: linear-gradient(135deg, #16a085, #1abc9c);
+    transform: translateY(-2px);
+}
+        /* Responsive */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 10px 6px;
+                font-size: 0.9em;
+            }
+            .branding img {
+                width: 90px;
+                height: 90px;
+            }
+            .branding h1 {
+                font-size: 1.6em;
+            }
+            .top-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Top Buttons with Icons -->
+    <nav class="top-buttons">
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{{ url_for('add_product') }}"><i class="fas fa-plus-circle"></i> Add Product</a>
+        <button onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+    </nav>
+
+    <!-- Branding -->
+    <div class="branding">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Kikitech Supplies Logo">
+        <h1>Kikitech Supplies</h1>
+        <p class="tagline">"Let's Glam Your House"</p>
+    </div>
+
+    <p class="contact">
+        <strong>Contact:</strong> +254796813752 &nbsp; | &nbsp;
+        <strong>Email:</strong> info@kikitechsupplies.co.ke
+    </p>
+
+    <h2 style="text-align:center; margin-bottom:20px;">Product Entry History</h2>
+
+    <!-- Filter Form -->
+    <form method="get" action="{{ url_for('view_product_entries') }}" class="filter-form">
+        <input type="text" name="name" placeholder="Search by product name" value="{{ name_filter }}">
+        <input type="date" name="start_date" value="{{ start_date }}">
+        <input type="date" name="end_date" value="{{ end_date }}">
+        <button type="submit"><i class="fas fa-filter"></i> Filter</button>
+    </form>
+
+    <!-- Table -->
+    {% if entries %}
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Quantity Added</th>
+                <th>Date Added</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.name }}</td>
+                <td>{{ entry.description }}</td>
+                <td>{{ entry.quantity_added }}</td>
+                <td>{{ entry.date_added }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align:center; font-style: italic; color: #f0f0f0;">No product entries found.</p>
+    {% endif %}
+</div>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>All Products - Kikitech Supplies</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* Reset & base */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8faf9;
+      color: #333;
+      animation: fadeInBody 1s ease-in;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 30px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgb(0 0 0 / 0.08);
+      animation: slideUp 1s ease-out;
+    }
+
+    h1 {
+      color: #007b5e;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .tagline {
+      font-style: italic;
+      color: #666;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.05em;
+    }
+
+    .contact {
+      font-size: 0.9em;
+      color: #444;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+   .top-nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.top-nav a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  background: linear-gradient(90deg, #4e54c8, #8f94fb); /* same as navbar */
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.top-nav a:hover {
+  background: linear-gradient(90deg, #2c3e50, #34495e); /* dark hover */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+.top-nav i {
+  font-size: 1.2em;
+}
+
+    /* Search input and toggle button */
+    #searchInput {
+      width: 60%;
+      max-width: 400px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      margin-bottom: 15px;
+      transition: border-color 0.3s ease;
+    }
+
+    #searchInput:focus {
+      border-color: #007b5e;
+      outline: none;
+    }
+
+    .filter-button {
+      padding: 10px 22px;
+      background-color: #007b5e;
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+      margin-left: 10px;
+      user-select: none;
+    }
+
+    .filter-button:hover,
+    .filter-button:focus {
+      background-color: #005f4a;
+      outline: none;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1em;
+      box-shadow: 0 0 12px rgb(0 0 0 / 0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    thead tr {
+      background-color: #007b5e;
+      color: white;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    th, td {
+      padding: 14px 18px;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    tbody tr.low-stock {
+      background-color: #ffe6e6;
+      transition: background-color 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background-color: #e1f0e8;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Status */
+    .status {
+      font-weight: 700;
+    }
+
+    .status.low {
+      color: #c0392b; /* red */
+    }
+
+    .status.ok {
+      color: #27ae60; /* green */
+    }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .top-buttons {
+        justify-content: center;
+        gap: 10px;
+      }
+      #searchInput {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 12px;
+      }
+      .filter-button {
+        width: 100%;
+        margin-left: 0;
+      }
+      th, td {
+        padding: 12px 10px;
+        font-size: 0.9em;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeInBody {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<body>
+<div class="top-nav">
+  {% if session['role'] == 'admin' %}
+      <a href="{{ url_for('dashboard') }}">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Admin Dashboard</span>
+      </a>
+  {% elif session['role'] == 'user' %}
+      <a href="{{ url_for('mydashboard') }}">
+        <i class="fas fa-user"></i>
+        <span>My Dashboard</span>
+      </a>
+  {% endif %}
+
+  <a href="{{ url_for('add_product') }}">
+    <i class="fas fa-boxes"></i>
+    <span>Add Products</span>
+  </a>
+</div>
+    <h1>Kikitech Supplies</h1>
+    <p class="tagline">"let's glam your house"</p>
+    <p class="contact" aria-label="Contact Information">
+      <strong>Contact:</strong> +254796813752 &nbsp; | &nbsp;
+      <strong>Email:</strong> info@kikitechsupplies.co.ke
+    </p>
+
+    <h2>All Products</h2>
+
+    <div role="search" aria-label="Search and filter products" style="margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search by product name or description..." 
+        aria-label="Search products by name or description" 
+        autocomplete="off"
+      >
+      <button class="filter-button" onclick="toggleLowStock()" id="toggleButton" aria-pressed="false" aria-label="Toggle low stock filter">
+        Show Only Low Stock
+      </button>
+    </div>
+
+    <table id="productTable" aria-describedby="product-table-desc">
+      <caption id="product-table-desc" class="sr-only">List of all products with name, description, quantity, and stock status</caption>
+      <thead>
+        <tr>
+          <th scope="col">Product Name</th>
+          <th scope="col">Description</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr class="{% if product['quantity']|int <= 3 %}low-stock{% endif %}">
+          <td>{{ product['name'] }}</td>
+          <td>{{ product['description'] }}</td>
+          <td>{{ product['quantity'] }}</td>
+          <td class="status {% if product['quantity']|int <= 3 %}low{% else %}ok{% endif %}">
+            {% if product['quantity']|int <= 3 %}
+              Low on Stock
+            {% else %}
+              Sufficient
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+
+  <style>
+    /* Screen reader only text */
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0,0,0,0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+  </style>
+
+  <script>
+    let lowStockMode = false;
+
+    function toggleLowStock() {
+      const rows = document.querySelectorAll("#productTable tbody tr");
+      const button = document.getElementById("toggleButton");
+      lowStockMode = !lowStockMode;
+
+      rows.forEach(row => {
+        const isLow = row.classList.contains("low-stock");
+        row.style.display = (!lowStockMode || isLow) ? "" : "none";
+      });
+
+      button.textContent = lowStockMode ? "Show All Products" : "Show Only Low Stock";
+      button.setAttribute('aria-pressed', lowStockMode);
+    }
+
+    document.getElementById("searchInput").addEventListener("input", function () {
+      const filter = this.value.toLowerCase();
+      const rows = document.querySelectorAll("#productTable tbody tr");
+
+      rows.forEach(row => {
+        const name = row.cells[0].textContent.toLowerCase();
+        const desc = row.cells[1].textContent.toLowerCase();
+        const matchesSearch = name.includes(filter) || desc.includes(filter);
+        const isLow = row.classList.contains("low-stock");
+
+        row.style.display = matchesSearch && (!lowStockMode || isLow) ? "" : "none";
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Sales - Kikitech Supplies</title>
+    <style>
+        /* Body and Page Background */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            margin: 0;
+            background: linear-gradient(to right, #f9f7f6, #e0f7fa); /* smooth colorful background */
+            color: #1a1a1a;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        /* Header Section */
+        .company-info {
+            text-align: center;
+            padding: 30px 20px;
+            background: #00acc1; /* bright turquoise */
+            color: #fff;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        .company-info p, .company-info em {
+            margin: 3px 0;
+            font-size: 14px;
+            color: #e0f7fa;
+        }
+
+        .company-info em {
+            font-style: normal;
+            color: #b2ebf2;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        /* Order Summary Cards */
+        .order-summary {
+            margin-bottom: 25px;
+            background: #ffffff; /* card background */
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Order Header */
+        .order-header {
+            font-weight: bold;
+            background-color: #00838f; /* darker turquoise */
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            background-color: #e0f7fa;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #b2ebf2;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #00acc1;
+            color: #fff;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #b2ebf2;
+        }
+
+        tbody tr:hover {
+            background-color: #80deea;
+        }
+
+        /* Grand Total */
+        .grand-total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 25px;
+            border-top: 2px solid #00acc1;
+            padding-top: 10px;
+        }
+
+        /* Buttons */
+        .buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .buttons a, .buttons button {
+            margin: 0 8px;
+            padding: 10px 22px;
+            background-color: #00acc1;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .buttons a:hover, .buttons button:hover {
+            background-color: #007c91;
+        }
+
+        /* Print View */
+        @media print {
+            body {
+                background: #ffffff;
+            }
+            .buttons {
+                display: none;
+            }
+            .order-summary {
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="company-info">
+        <h1>Kikitech Supplies</h1>
+        <p><strong>Phone:</strong> 0796813752 | <strong>Email:</strong> kikitechsupplies@gmail.com</p>
+        <p><em>Let's glam your house</em></p>
+    </div>
+
+    <div class="content-wrapper">
+        <h2>All Sales Report</h2>
+
+        {% for order_id, order in grouped_sales.items() %}
+            <div class="order-summary">
+                <div class="order-header">
+                    Customer: {{ order['customer_name'] }} |
+                    Payment: {{ order['payment_mode'] }} |
+                    Date: {{ order['date'] }}
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Price (Ksh)</th>
+                            <th>Subtotal (Ksh)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order['items'] %}
+                        <tr>
+                            <td>{{ item['product_name'] }}</td>
+                            <td>{{ item['description'] }}</td>
+                            <td>{{ item['quantity'] }}</td>
+                            <td>{{ '%.2f'|format(item['price']) }}</td>
+                            <td>{{ '%.2f'|format(item['quantity'] * item['price']) }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="4" style="text-align:right;"><strong>Total:</strong></td>
+                            <td><strong>Ksh {{ '%.2f'|format(order['total_amount']) }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+        <div class="grand-total">
+            Grand Total: Ksh {{ '%.2f'|format(grand_total) }}
+        </div>
+
+        <div class="buttons">
+            <a href="{{ url_for('home') }}">🏠 Home</a>
+            <a href="{{ url_for('add_order') }}">➕ Add Order</a>
+            <button onclick="window.print()">🖨️ Print</button>
+        </div>
+    </div>
+</body>
+</html>

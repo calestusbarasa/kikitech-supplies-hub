@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Orders - Kikitech Supplies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8fbfd;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #2980b9;
+            color: white;
+        }
+
+        .back-home {
+            text-align: center;
+        }
+
+        .back-home a {
+            display: inline-block;
+            padding: 10px 18px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-home a:hover {
+            background-color: #1f5f8b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>All Orders - Kikitech Supplies</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Order Date</th>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    {% for item in order['items'] %}
+                    <tr>
+                        <td>{{ order['id'] }}</td>
+                        <td>{{ order['customer_name'] }}</td>
+                        <td>{{ order['order_date'] }}</td>
+                        <td>{{ item['product_name'] }}</td>
+                        <td>{{ item['description'] }}</td>
+                        <td>{{ item['quantity'] }}</td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="back-Dashboard">
+            <a href="{{ url_for('dashboard') }}" class="btn-icon"><i class="Go to dashboard"></i> Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIKITECH SUPPLIES - Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            max-width: 450px;
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .btn-custom {
+            background-color: #0d6efd;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #0b5ed7;
+        }
+        footer {
+            margin-top: auto;
+            padding: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card p-4 text-center">
+    <h1 class="mb-3">Welcome to KIKITECH SUPPLIES</h1>
+    <p class="mb-4">Your trusted supplier for quality tech and supplies.</p>
+    <a href="{{ url_for('login') }}" class="btn btn-custom w-100 mb-2">Login</a>
+    <a href="{{ url_for('reset_password') }}" class="btn btn-outline-light w-100">Reset Password</a>
+</div>
+
+<footer>
+    &copy; {{ current_year }} KIKITECH SUPPLIES. All rights reserved.
+</footer>
+
+<script>
+    document.querySelector('footer').innerHTML = "&copy; " + new Date().getFullYear() + " KIKITECH SUPPLIES. All rights reserved.";
+</script>
+</body>
+</html>

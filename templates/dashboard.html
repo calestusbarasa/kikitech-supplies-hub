@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Kikitech Supplies</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.1.0"></script>
+<style>
+/* =======================
+   Global Styles
+======================= */
+
+/* =======================
+   Toast Notifications
+======================= */
+.toast-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+}
+
+.toast {
+  min-width: 280px;
+  max-width: 400px;
+  text-align: center;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 10px;
+  opacity: 1;
+}
+
+.text-bg-success { background-color: #28a745 !important; }
+.text-bg-danger  { background-color: #dc3545 !important; }
+.text-bg-info    { background-color: #0dcaf0 !important; color: #000 !important; }
+.text-bg-warning { background-color: #ffc107 !important; color: #000 !important; }
+
+/* =======================
+   Body / Dark Mode
+======================= */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  background-color: #f0f2f5;
+  color: #333;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+/* =======================
+   Navbar
+======================= */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: #fff;
+  background: linear-gradient(90deg, #4e54c8, #8f94fb);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.navbar.dark-mode {
+  background: linear-gradient(90deg, #2c3e50, #34495e);
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.navbar-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  font-size: 20px;
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.dark-mode .navbar-title {
+  color: #f1f1f1;
+}
+
+.toggle-theme {
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+  transition: color 0.2s;
+}
+.toggle-theme:hover {
+  color: #ffd700;
+}
+
+#datetime {
+  font-size: 14px;
+  color: #f1f1f1;
+  margin-left: 10px;
+}
+.dark-mode #datetime {
+  color: #ccc;
+}
+
+/* =======================
+   Notification
+======================= */
+.notification-wrapper {
+  position: absolute;
+  top: 20px;
+  right: 60px;
+  z-index: 1000;
+}
+
+#notificationBell {
+  position: relative;
+  font-size: 22px;
+  color: #333;
+  cursor: pointer;
+}
+
+#notificationBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: red;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+#notificationDropdown {
+  display: none;
+  position: absolute;
+  top: 35px;
+  right: 0;
+  width: 320px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#notificationDropdown .dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-weight: bold;
+}
+
+#clearNotifications {
+  background: red;
+  color: #fff;
+  border: none;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#notificationList {
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+}
+
+#notificationList li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+#notificationList li small {
+  color: gray;
+}
+
+#notificationList .no-notifications {
+  padding: 8px;
+  color: gray;
+  text-align: center;
+}
+/* =======================
+   Sidebar
+======================= */
+/* =======================
+   Sidebar
+======================= */
+.sidebar {
+  position: fixed;
+  top: 60px; left: 0; bottom: 0;
+  width: 240px;
+  background: linear-gradient(180deg, #ff7e5f, #feb47b);
+  color: #fff;
+  overflow-y: auto;
+  padding-top: 20px;
+  border-right: 1px solid rgba(0,0,0,0.1);
+  white-space: nowrap;
+  z-index: 999;
+  transition: width 0.3s ease, padding 0.3s ease, left 0.3s ease;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  margin: 5px 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.sidebar a i {
+  margin-right: 12px;
+  min-width: 20px;
+  font-size: 18px;
+  text-align: center;
+}
+
+/* Label text */
+.sidebar a .label,
+.lend-toggle .label {
+  display: inline;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar a:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Collapsed (desktop icons only) */
+.sidebar.collapsed {
+  width: 60px;
+  padding: 20px 5px;
+}
+
+.sidebar.collapsed .label {
+  display: none;
+}
+
+/* Collapsed (mobile slide in/out) */
+.sidebar.collapsed-mobile {
+  left: 0 !important;
+}
+
+/* =======================
+   Lend Section
+======================= */
+.lend-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.lend-toggle:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.lend-links {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+
+.lend-links.show {
+  max-height: 500px;
+}
+
+.lend-links a {
+  background: #ff6b6b;
+  margin: 4px 15px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.lend-links a:hover {
+  background: #ff4757;
+}
+
+/* =======================
+   Main Content
+======================= */
+.main {
+  margin-top: 60px;
+  margin-left: 240px;
+  padding: 25px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed + .main {
+  margin-left: 60px;
+}
+
+/* =======================
+   Best Selling Month
+======================= */
+.best-selling-month {
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  color: #333;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.best-selling-month th {
+  background: linear-gradient(90deg, #ff6a88, #ff99ac);
+  color: #fff;
+}
+
+.best-selling-month tr:nth-child(even) {
+  background: #ffe5e5;
+}
+
+.best-selling-month tr:hover {
+  background: #ffc1c1;
+}
+
+/* =======================
+   Stats Cards
+======================= */
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  flex: 1;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.card .value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Logout button */
+.btn-logout {
+  background: #fff;
+  color: #007bff;
+  border-radius: 25px;
+  font-weight: 500;
+  padding: 4px 12px;
+  transition: 0.3s;
+}
+
+.btn-logout:hover {
+  background: #f0f0f0;
+  color: #0056b3;
+}
+
+/* =======================
+   Tables
+======================= */
+table {
+  width: 100%;
+  margin-bottom: 25px;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+table th,
+table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid #eee;
+}
+
+table th {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: #fff;
+  text-align: left;
+}
+
+table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+table tr:hover {
+  background: #e0f0ff;
+}
+
+.low-stock {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.dark-mode table {
+  background: #1f1f1f;
+  color: #ddd;
+}
+
+.dark-mode table th {
+  background: linear-gradient(90deg, #1e3c72, #2a5298);
+  color: #fff;
+}
+
+.dark-mode table tr:nth-child(even) {
+  background: #2a2a2a;
+}
+
+.dark-mode table tr:hover {
+  background: #3a3a3a;
+}
+/* =======================
+   Chart & Filters
+======================= */
+.chart-container {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.chart-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.chart-filters select,
+.chart-filters input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.toggle-btn {
+  padding: 6px 14px;
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.toggle-btn:hover {
+  background: linear-gradient(90deg, #ff4e3c, #ff7e5f);
+}
+
+/* =======================
+   Transparent Background Logo
+======================= */
+body {
+  position: relative; /* ensure pseudo-element positioning works */
+  background-color: #f5f5f5;
+  z-index: 1;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 500px;          /* increase size */
+  max-width: 80%;        /* responsive max width */
+  height: auto;
+  transform: translate(-50%, -50%);
+  background-image: url('/static/logo.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain; /* keep proportions */
+  opacity: 0.05;            /* subtle watermark effect */
+  pointer-events: none;     /* click-through */
+  z-index: 0;               /* behind all content */
+}
+
+/* =======================
+   Responsive
+======================= */
+@media (max-width: 768px) {
+  .navbar-title {
+    font-size: 16px;
+    max-width: 50%;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .toggle-theme { display: none; }
+
+  /* Sidebar overlay for mobile */
+  .sidebar {
+    left: -240px;   /* hidden by default */
+    width: 240px;
+    top: 60px;
+    transition: left 0.3s ease;
+  }
+  .sidebar.collapsed-mobile {
+    left: 0;        /* slides in */
+  }
+
+  .main {
+    margin-left: 0 !important;
+    padding: 15px;
+  }
+
+  /* Tables scroll horizontally */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-title {
+    font-size: 14px;
+    max-width: 45%;
+  }
+
+  .sidebar {
+    width: 180px;
+  }
+
+  .sidebar.collapsed {
+    width: 50px;
+  }
+}
+</style>
+
+
+</head>
+<body>
+<div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 2000">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="toast align-items-center text-bg-{{ category }} border-0 show mb-2" role="alert">
+          <div class="d-flex">
+            <div class="toast-body text-center">
+              {{ message }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
+<!-- Navbar -->
+<div class="navbar">
+  <!-- Left: Menu -->
+  <div class="navbar-left">
+    <i class="fas fa-bars" id="menuToggle" style="cursor: pointer; margin-right: 10px;"></i>
+  </div>
+
+  <!-- Center: Title -->
+  <div class="navbar-center">
+    <div class="navbar-title">Kikitech Supplies Dashboard</div>
+  </div>
+
+  <!-- Right: DateTime, Dark Mode, Notifications -->
+  <div class="navbar-right">
+    <!-- Date/Time -->
+    <div id="datetime" class="navbar-datetime"></div>
+
+    {% if session.get('role') == 'admin' %}
+      <a href="{{ url_for('admin_dashboard_view') }}" 
+         class="btn btn-outline-primary rounded-circle shadow-sm d-inline-flex align-items-center justify-content-center"
+         style="width: 45px; height: 45px;" 
+         title="Admin Dashboard">
+        <i class="fas fa-user-shield"></i>
+      </a>
+    {% endif %}
+
+    <!-- Dark Mode Toggle -->
+    <span class="toggle-theme" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</span>
+
+    <!-- Logout -->
+    <a href="{{ url_for('logout') }}" class="btn btn-logout btn-sm">
+      <i class="fas fa-sign-out-alt"></i>
+    </a>
+  </div>
+</div>
+
+<!-- Notification Bell -->
+<div class="notification-wrapper">
+  <div style="position: relative; display: inline-block;">
+    <!-- Bell icon -->
+    <i class="fas fa-bell" id="notificationBell"></i>
+
+    <!-- Badge -->
+    {% if notifications %}
+      <span id="notificationBadge">{{ notifications|length }}</span>
+    {% else %}
+      <span id="notificationBadge" style="display: none;"></span>
+    {% endif %}
+
+    <!-- Dropdown -->
+    <div id="notificationDropdown">
+      <div class="dropdown-header">
+        Notifications
+        <button id="clearNotifications">Clear All</button>
+      </div>
+      <ul id="notificationList">
+        {% for note in notifications %}
+          <li>
+            {{ note.message }}<br>
+            <small>{{ note.timestamp }}</small>
+          </li>
+        {% else %}
+          <li class="no-notifications">No notifications</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+   <!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <a href="{{ url_for('add_product') }}">
+    <i class="fas fa-plus-circle"></i> Add Product
+  </a>
+  <a href="{{ url_for('view_products') }}">
+    <i class="fas fa-boxes"></i> View Products
+  </a>
+  <a href="{{ url_for('view_product_entries') }}">
+    <i class="fas fa-history"></i> Product Entries
+  </a>
+  <a href="{{ url_for('add_order') }}">
+    <i class="fas fa-cart-plus"></i> Add Sale
+  </a>
+  <a href="{{ url_for('product_insight') }}">
+    <i class="fas fa-chart-bar"></i> Product Insight
+  </a>
+  <a href="{{ url_for('todays_sales') }}">
+    <i class="fas fa-calendar-day"></i> Today's Sales
+  </a>
+  <a href="{{ url_for('view_sales') }}">
+    <i class="fas fa-receipt"></i> View Sales
+  </a>
+
+  <!-- Lend Products Section -->
+  <div class="lend-toggle">
+    <span><i class="fas fa-box"></i> Lend Products</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+  <div class="lend-links">
+    <a href="{{ url_for('lend') }}">
+      <i class="fas fa-hand-holding-box"></i> Lend a Product
+    </a>
+    <a href="{{ url_for('lend_history') }}">
+      <i class="fas fa-scroll"></i> Lending History
+    </a>
+    <a href="{{ url_for('return_pay') }}">
+      <i class="fas fa-undo-alt"></i> Return or Pay
+    </a>
+    <a href="{{ url_for('customer_history') }}">
+      <i class="fas fa-users"></i> Customer History
+    </a>
+  </div>
+</div>
+
+<!-- Watermark -->
+<div class="animated-watermark">
+  <div class="watermark-item title">KIKITECH SUPPLIES</div>
+  <div class="watermark-item slogan">Let's Glam Your House</div>
+  <img src="/static/logo.png" alt="Kikitech Logo" class="watermark-item logo">
+</div>
+
+<!-- Main Content -->
+<div class="main" id="mainContent">
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="card">
+      <h3>Today's Revenue</h3>
+      <div class="value">KES {{ todays_revenue }}</div>
+    </div>
+    <div class="card">
+      <h3>Total Products Sold Today</h3>
+      <div class="value">{{ total_products_sold_today }}</div>
+    </div>
+    <div class="card">
+      <h3>Total Quantity in Stock</h3>
+      <div class="value">{{ total_quantity_in_stock }}</div>
+    </div>
+  </div>
+</div>
+<!-- Best Selling Month -->
+<div class="card">
+  <h2>Best Selling Month</h2>
+  {% if best_selling_month %}
+    <table class="best-selling-month">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Total Revenue</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ best_selling_month['month'] }}</td>
+          <td>KES {{ best_selling_month['revenue'] }}</td>
+        </tr>
+      </tbody>
+    </table>
+  {% else %}
+    <p>No monthly sales data available.</p>
+  {% endif %}
+</div>
+
+<!-- Top 5 Selling Products -->
+<div class="card">
+  <h2>Top 5 Selling Products</h2>
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Description</th>
+        <th>Total Quantity Sold</th>
+        <th>Total Revenue (KSh)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in top_products %}
+      <tr>
+        <td>{{ product['product_name'] }}</td>
+        <td>{{ product['description'] }}</td>
+        <td class="center">{{ product['total_quantity'] or 0 }}</td>
+        <td class="total-revenue">KSh {{ '%.2f' | format(product['total_revenue'] or 0) }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4" class="center">No sales data available.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Low Stock Products -->
+<div class="card">
+  <h2>Low In Stock</h2>
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Description</th>
+        <th>Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in low_stock_products %}
+      <tr>
+        <td>{{ product['product_name'] }}</td>
+        <td>{{ product['description'] }}</td>
+        <td class="low-stock">{{ product['quantity'] }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="3" class="center">No low stock products.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+  <!-- Sales Chart & Filters -->
+  <!-- Chart Filters -->
+<div class="chart-filters">
+  <form method="GET" action="{{ url_for('dashboard') }}">
+    <label for="filter_type">View sales by:</label>
+    <select name="filter_type" id="filter_type" onchange="toggleInputs()">
+      <option value="range" {% if filter_type == 'range' %}selected{% endif %}>Date Range</option>
+      <option value="month" {% if filter_type == 'month' %}selected{% endif %}>Month</option>
+      <option value="year" {% if filter_type == 'year' %}selected{% endif %}>Year</option>
+    </select>
+
+    <!-- Range Inputs -->
+    <div id="range_inputs" style="margin-top:0.5rem;">
+      <input type="date" name="start_date" value="{{ start_date }}">
+      <input type="date" name="end_date" value="{{ end_date }}">
+    </div>
+
+    <!-- Month Input -->
+    <div id="month_input" style="margin-top:0.5rem; display:none;">
+      <input type="month" name="selected_month" value="{{ selected_month }}">
+    </div>
+
+    <!-- Year Input -->
+    <div id="year_input" style="margin-top:0.5rem; display:none;">
+      <input type="number" name="selected_year" placeholder="e.g. 2025" value="{{ selected_year }}">
+    </div>
+
+    <!-- Chart Type -->
+    <label for="chart_type">Chart Type:</label>
+    <select id="chart_type">
+      <option value="bar">Bar</option>
+      <option value="line">Line</option>
+      <option value="pie">Pie</option>
+    </select>
+
+    <!-- Buttons -->
+    <button type="submit" class="toggle-btn" style="margin-top:0.5rem;">Apply Filter</button>
+    <button type="button" class="toggle-btn" onclick="downloadChart()">Download Chart</button>
+  </form>
+</div>
+
+<!-- Chart -->
+<div class="chart-container">
+  <canvas id="salesChart" height="100"></canvas>
+</div>
+
+<!-- Most Frequent Customers -->
+<div class="card">
+  <h2>Most Frequent Customers</h2>
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Number of Purchases</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in frequent_customers %}
+      <tr>
+        <td>{{ customer['customer_name'] }}</td>
+        <td>{{ customer['frequency'] }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="2" class="center">No frequent customer data available.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Recent Customers & Sales -->
+<div class="card">
+  <h2>Recent Customers and Sales</h2>
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Product</th>
+        <th>Description</th>
+        <th>Total (KSh)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sale in recent_sales %}
+        {% set item_count = sale["items"] | length %}
+        {% for item in sale["items"] %}
+        <tr>
+          {% if loop.first %}
+          <td rowspan="{{ item_count }}">{{ sale["customer_name"] }}</td>
+          {% endif %}
+          <td>{{ item["name"] }}</td>
+          <td>{{ item["description"] }}</td>
+          {% if loop.first %}
+          <td rowspan="{{ item_count }}" class="total-revenue">
+            KSh {{ "%.2f"|format(sale["total_amount"] or 0) }}
+          </td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      {% else %}
+      <tr>
+        <td colspan="4" class="center">No recent sales available.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // ================================
+  // Dark Mode Toggle
+  // ================================
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    document.querySelector('.navbar')?.classList.toggle('dark-mode');
+  }
+
+  // ================================
+  // Notifications Dropdown
+  // ================================
+  const notificationBell = document.getElementById("notificationBell");
+  const notificationList = document.getElementById("notificationList");
+
+  if (notificationBell && notificationList) {
+    notificationBell.addEventListener("click", () => {
+      notificationList.style.display =
+        (notificationList.style.display === "none" || notificationList.style.display === "")
+          ? "block"
+          : "none";
+    });
+
+    // Close dropdown when clicking outside
+    window.addEventListener("click", (event) => {
+      if (!notificationBell.contains(event.target) &&
+          !notificationList.contains(event.target)) {
+        notificationList.style.display = "none";
+      }
+    });
+  }
+
+  // ================================
+  // Sidebar Toggle
+  // ================================
+
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+const mainContent = document.getElementById('mainContent');
+
+if (menuToggle && sidebar && mainContent) {
+  menuToggle.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      // Mobile → slide in/out
+      sidebar.classList.toggle('collapsed-mobile');
+    } else {
+      // Desktop → shrink to icons only
+      sidebar.classList.toggle('collapsed');
+      mainContent.classList.toggle('collapsed-content');
+    }
+  });
+}
+
+// Close sidebar if clicking outside (mobile only)
+mainContent.addEventListener('click', () => {
+  if (window.innerWidth <= 768 && sidebar.classList.contains('collapsed-mobile')) {
+    sidebar.classList.remove('collapsed-mobile');
+  }
+});
+
+  // ================================
+  // Lend Section Toggle
+  // ================================
+  document.querySelectorAll('.lend-toggle').forEach(el => {
+    el.addEventListener('click', () => {
+      const links = el.nextElementSibling;
+      const arrow = el.querySelector('i.fas.fa-chevron-down');
+      if (!links || !arrow) return;
+
+      links.classList.toggle('show');
+      arrow.style.transition = 'transform 0.3s';
+      arrow.style.transform = links.classList.contains('show')
+        ? 'rotate(180deg)'
+        : 'rotate(0deg)';
+    });
+  });
+
+  // ================================
+  // Date & Time
+  // ================================
+  function updateDateTime() {
+    const now = new Date();
+    const options = {
+      weekday: 'long', year: 'numeric', month: 'long',
+      day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true
+    };
+    const datetimeEl = document.getElementById('datetime');
+    if (datetimeEl) {
+      datetimeEl.textContent = now.toLocaleString('en-GB', options);
+    }
+  }
+  updateDateTime();
+  setInterval(updateDateTime, 60000);
+
+  // ================================
+  // Dynamic Filter Inputs (Chart Filters)
+  // ================================
+  function toggleInputs() {
+    const filterType = document.getElementById("filter_type")?.value;
+    if (!filterType) return;
+
+    document.getElementById("range_inputs").style.display =
+      filterType === "range" ? "block" : "none";
+    document.getElementById("month_input").style.display =
+      filterType === "month" ? "block" : "none";
+    document.getElementById("year_input").style.display =
+      filterType === "year" ? "block" : "none";
+  }
+  window.addEventListener('load', toggleInputs);
+
+  // ================================
+  // Chart.js Setup
+  // ================================
+  const ctx = document.getElementById('salesChart')?.getContext('2d');
+  if (ctx) {
+    let currentType = 'bar';
+
+    const data = {
+      labels: {{ chart_labels | safe }},
+      datasets: [{
+        label: 'Sales Amount (Ksh)',
+        data: {{ chart_data | safe }},
+        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    };
+
+    const options = {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Sales Summary' },
+        tooltip: {
+          callbacks: {
+            label: ctx => 'Ksh ' + (ctx.parsed.y ?? 0).toLocaleString()
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: '{{ x_axis_label }}' } },
+        y: { title: { display: true, text: 'Sales Amount (Ksh)' }, beginAtZero: true }
+      }
+    };
+
+    let salesChart = new Chart(ctx, { type: currentType, data, options });
+
+    // Chart type switcher
+    document.getElementById('chart_type')?.addEventListener('change', function () {
+      salesChart.destroy();
+      currentType = this.value;
+      salesChart = new Chart(ctx, { type: currentType, data, options });
+    });
+
+    // Chart download
+    function downloadChart() {
+      const url = salesChart.toBase64Image();
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'sales_chart.png';
+      link.click();
+    }
+    window.downloadChart = downloadChart;
+  }
+
+  // ================================
+  // Notifications Dropdown
+  // ================================
+  document.addEventListener("DOMContentLoaded", function () {
+    const bell = document.getElementById("notificationBell");
+    const dropdown = document.getElementById("notificationDropdown");
+    const notifList = document.getElementById("notificationList");
+    const notifBadge = document.getElementById("notificationBadge");
+    const clearBtn = document.getElementById("clearNotifications");
+
+    if (bell && dropdown) {
+      // Toggle dropdown
+      bell.addEventListener("click", () => {
+        const isVisible = dropdown.style.display === "block";
+        dropdown.style.display = isVisible ? "none" : "block";
+        if (!isVisible && notifBadge) notifBadge.style.display = "none"; // hide badge
+      });
+
+      // Close dropdown on outside click
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".notification-wrapper")) {
+          dropdown.style.display = "none";
+        }
+      });
+    }
+
+    // Clear notifications (demo, backend needed)
+    if (clearBtn && notifList) {
+      clearBtn.addEventListener("click", () => {
+        fetch("/clear_notifications", { method: "POST" })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              notifList.innerHTML = "<li class='no-notifications'>No notifications</li>";
+              if (notifBadge) notifBadge.style.display = "none";
+            }
+          });
+      });
+    }
+  });
+
+  // ================================
+  // Toast Auto-Hide
+  // ================================
+  setTimeout(() => {
+    document.querySelectorAll(".toast").forEach(toast => {
+      toast.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+      toast.style.opacity = "0";
+      toast.style.transform = "translate(-50%, -60%)";
+      setTimeout(() => toast.remove(), 600);
+    });
+  }, 3000);
+</script>
+
+
+</body>
+</html>

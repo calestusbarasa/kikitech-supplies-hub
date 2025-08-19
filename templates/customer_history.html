@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer History - Kikitech Supplies</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #f0f4f8);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2575fc;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        form:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        select, input[type="text"] {
+            border-radius: 8px;
+            border: 2px solid #2575fc;
+            padding: 10px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: #0056b3;
+            outline: none;
+            box-shadow: 0 0 8px rgba(37, 117, 252, 0.3);
+        }
+
+        button, .btn-secondary {
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        button:hover, .btn-secondary:hover {
+            transform: translateY(-2px);
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+            color: white;
+        }
+
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: #f4f7f6;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #e0f7ea;
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+
+        /* Badges */
+        .badge-lend { background-color: #0d6efd; }
+        .badge-return { background-color: #198754; }
+        .badge-pay { background-color: #ffc107; color: black; }
+        .badge-pending { background-color: #dc3545; }
+        .badge-cleared { background-color: #28a745; }
+
+        .row-pending { background-color: #f8d7da !important; }
+
+        /* Navigation Links */
+        .nav-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a i {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .table th, .table td {
+                font-size: 14px;
+            }
+
+            form .col-auto {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>kikitech supplies Customer History</h2>
+
+    <form method="GET" action="{{ url_for('customer_history') }}" class="row g-3">
+   <div class="top-nav">
+    {% if session['role'] == 'admin' %}
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+    {% elif session['role'] == 'user' %}
+        <a href="{{ url_for('mydashboard') }}"><i class="fas fa-user"></i> My Dashboard</a>
+    {% endif %}
+    
+    <a href="{{ url_for('view_products') }}"><i class="fas fa-boxes"></i> View All Products</a>
+</div>
+        <div class="col-md-4">
+            <input type="text" name="customer_name" value="{{ request.args.get('customer_name', '') }}" class="form-control" placeholder="Search by customer name">
+        </div>
+        
+
+        <div class="col-md-4">
+            <select name="status_filter" class="form-select">
+                <option value="">All Status</option>
+                <option value="Pending" {% if request.args.get('status_filter') == 'Pending' %}selected{% endif %}>Pending</option>
+                <option value="Cleared" {% if request.args.get('status_filter') == 'Cleared' %}selected{% endif %}>Cleared</option>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-fill"><i class="fas fa-search"></i> Search</button>
+            <a href="{{ url_for('customer_history') }}" class="btn btn-secondary flex-fill"><i class="fas fa-times"></i> Clear</a>
+        </div>
+    </form>
+
+    <table class="table table-striped table-hover table-bordered align-middle">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Product</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Action</th>
+                <th>Status</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if history %}
+                {% for record in history %}
+                    {% if not request.args.get('status_filter') or record.status == request.args.get('status_filter') %}
+                    <tr class="{% if record.status == 'Pending' %}row-pending{% endif %}">
+                        <td>{{ record.date_lent }}</td>
+                        <td>{{ record.customer_name }}</td>
+                        <td>{{ record.product_name }}</td>
+                        <td>{{ record.description }}</td>
+                        <td>{{ record.quantity_taken }}</td>
+                        <td>
+                            {% if record.action_type == 'lend' %}
+                                <span class="badge badge-lend">Lent</span>
+                            {% elif record.action_type == 'return' %}
+                                <span class="badge badge-return">Returned</span>
+                            {% elif record.action_type == 'pay' %}
+                                <span class="badge badge-pay">Paid</span>
+                            {% else %}
+                                {{ record.action_type }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if record.status == 'Pending' %}
+                                <span class="badge badge-pending">Pending</span>
+                            {% else %}
+                                <span class="badge badge-cleared">Cleared</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ record.balance }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted">No records found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+
+</div>
+
+</body>
+</html>

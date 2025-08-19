@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kikitech Supplies - Receipt PDF</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 13px;
+        line-height: 1.4;
+        color: #333;
+        background-color: #f2f6fa;
+    }
+
+    .container {
+        max-width: 780px;
+        margin: auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+    }
+
+    /* Header */
+    .header {
+        text-align: center;
+        padding: 15px;
+        background-color: #00b14f; /* Safaricom green */
+        color: #fff;
+        border-radius: 12px;
+    }
+
+    .header img.logo {
+        width: 60px;
+        height: auto;
+        margin-bottom: 8px;
+    }
+
+    .header h2 {
+        margin: 4px 0;
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .subheading {
+        font-style: italic;
+        font-size: 14px;
+        margin-top: 2px;
+        color: #e0f7e6;
+    }
+
+    .contact {
+        font-size: 11px;
+        margin-top: 4px;
+        color: #e0f7e6;
+    }
+
+    .line {
+        border-top: 2px solid #00b14f;
+        margin: 10px 0;
+    }
+
+    /* Info section */
+    .info {
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    .info img.icon {
+        width: 14px;
+        height: 14px;
+        vertical-align: middle;
+        margin-right: 4px;
+    }
+
+    .info strong {
+        display: inline-block;
+        width: 140px;
+        color: #2c3e50;
+    }
+
+    /* Items Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+    }
+
+    th, td {
+        border: 1px solid #007e33;
+        padding: 8px;
+    }
+
+    th {
+        background-color: #007e33;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    td.right {
+        text-align: right;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #eafaf1;
+    }
+
+    tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    .total-row {
+        font-weight: bold;
+        background-color: #004d26;
+        color: #fff;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        font-size: 12px;
+        margin-top: 12px;
+        color: #2c3e50;
+    }
+
+    .served-by {
+        text-align: right;
+        font-size: 12px;
+        margin-top: 6px;
+        color: #2c3e50;
+        font-style: italic;
+    }
+
+    @page { size: A4; margin: 15mm; }
+
+</style>
+</head>
+<body>
+<div class="container">
+    <!-- Header with Logo -->
+    <div class="header">
+        <img class="logo" src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+        <h2>KIKITECH SUPPLIES</h2>
+        <div class="subheading">"Let's glam your house!"</div>
+        <div class="contact">
+            Dealers in Electronics & Household Needs<br>
+            TVs, Laptops, Woofers, Fans, Rugs, Dispensers, Shoe Racks, Pillows, Nets & More<br>
+            Contact: 0796813752 / 0748919331
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <!-- Order Info with icons -->
+    <div class="info">
+        <strong><img class="icon" src="{{ url_for('static', filename='images/receipt.png') }}">Receipt No:</strong> RCT-{{ '%04d'|format(order.id) }}<br>
+        <strong><img class="icon" src="{{ url_for('static', filename='images/calendar.png') }}">Date:</strong> {{ current_time }}<br>
+        <strong><img class="icon" src="{{ url_for('static', filename='images/customer.png') }}">Customer:</strong> {{ order.customer_name or 'N/A' }}<br>
+        <strong><img class="icon" src="{{ url_for('static', filename='images/payment.png') }}">Payment Mode:</strong> {{ order.payment_mode or 'N/A' }}
+    </div>
+
+    <!-- Items Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th class="right">Qty</th>
+                <th class="right">Price (Ksh)</th>
+                <th class="right">Subtotal (Ksh)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item['product_name'] }}</td>
+                <td class="right">{{ item['quantity'] }}</td>
+                <td class="right">{{ '%.2f'|format(item['price']) }}</td>
+                <td class="right">{{ '%.2f'|format(item['subtotal']) }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="total-row">
+                <td colspan="3" class="right">TOTAL</td>
+                <td class="right">Ksh {{ '%.2f'|format(total) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="footer">
+        Thank you for shopping with us!<br>
+        Karibu Tena!
+    </div>
+
+    <div class="served-by">
+        Served by: <strong>{{ active_user }}</strong>
+    </div>
+</div>
+</body>
+</html>

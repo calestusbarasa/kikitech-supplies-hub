@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Insight - Kikitech Supplies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0f3f7, #e6ebf1);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Header styling */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            margin-bottom: 12px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+            color: #007bff;
+            letter-spacing: 1px;
+        }
+        .header p {
+            margin: 6px 0 0;
+            font-size: 16px;
+            font-style: italic;
+            color: #555;
+        }
+
+        /* Top bar */
+        .top-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-form,
+        .export-buttons,
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-form input[type="date"],
+        .filter-form button,
+        .export-buttons button,
+        .nav-buttons a,
+        #searchInput {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            text-decoration: none;
+            background: white;
+            transition: 0.3s;
+        }
+
+        .filter-form button,
+        .export-buttons button,
+        .nav-buttons a {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .filter-form button:hover,
+        .export-buttons button:hover,
+        .nav-buttons a:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        #searchInput {
+            flex-grow: 1;
+            max-width: 280px;
+        }
+
+        /* Table styling */
+        .table-container {
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9fbfd;
+        }
+
+        tbody tr:hover {
+            background-color: #eef5ff;
+        }
+
+        td.center {
+            text-align: center;
+        }
+
+        td.total-revenue {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-form, .export-buttons, .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            #searchInput {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Branded header -->
+    <div class="header">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Kikitech Supplies Logo">
+        <h1>Kikitech Supplies</h1>
+        <p>"Let's Glam Your House"</p>
+    </div>
+
+    <div class="top-bar">
+        <!-- Filter form -->
+        <form method="get" class="filter-form">
+            <input type="date" name="start_date" value="{{ start_date or '' }}">
+            <input type="date" name="end_date" value="{{ end_date or '' }}">
+            <button type="submit"><i class="fas fa-filter"></i> Filter</button>
+        </form>
+
+        <!-- Export options -->
+        <div class="export-buttons">
+            <button onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+            <button onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="nav-buttons">
+            {% if session['role'] == 'admin' %}
+                <a href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+            {% elif session['role'] == 'user' %}
+                <a href="{{ url_for('mydashboard') }}"><i class="fas fa-user"></i> My Dashboard</a>
+            {% endif %}
+            <a href="{{ url_for('view_products') }}"><i class="fas fa-boxes"></i> Products</a>
+            <a href="{{ url_for('add_product') }}"><i class="fas fa-plus-circle"></i> Add Product</a>
+        </div>
+
+        <!-- Search -->
+        <input type="text" id="searchInput" placeholder="🔍 Search product...">
+    </div>
+
+    <div class="table-container" id="report">
+        <table id="insightTable">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Total Quantity Sold</th>
+                    <th>Total Revenue (KSh)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product['product_name'] }}</td>
+                        <td>{{ product['description'] or '-' }}</td>
+                        <td class="center">{{ product['total_quantity'] or 0 }}</td>
+                        <td class="total-revenue">KSh {{ '%.2f' | format(product['total_revenue'] or 0) }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="center">No sales data found for selected range.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadPDF() {
+            const element = document.getElementById('report');
+            const opt = {
+                margin:       0.4,
+                filename:     'product_insight.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
+        document.getElementById("searchInput").addEventListener("keyup", function() {
+            const filter = this.value.toLowerCase();
+            const rows = document.querySelectorAll("#insightTable tbody tr");
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? "" : "none";
+            });
+        });
+    </script>
+</body>
+</html>

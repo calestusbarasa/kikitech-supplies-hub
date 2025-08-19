@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kikitech Supplies - Lending History</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f0f4f8, #e0f7fa);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        input[type="text"] {
+            padding: 10px 12px;
+            width: 250px;
+            border: 2px solid #6a11cb;
+            border-radius: 6px;
+            transition: 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #2575fc;
+            outline: none;
+            box-shadow: 0 0 8px rgba(37, 117, 252, 0.4);
+        }
+
+        button {
+            padding: 10px 16px;
+            margin-left: 5px;
+            background: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #2575fc;
+            transform: translateY(-2px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            transition: background 0.3s ease;
+        }
+
+        th {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+        }
+
+        tr:hover {
+            background: #e0f7fa;
+            transform: scale(1.01);
+        }
+
+        .back-btn, .top-nav a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: #6a11cb;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .back-btn:hover, .top-nav a:hover {
+            background: #2575fc;
+            transform: translateY(-2px);
+        }
+
+        .top-nav {
+            margin-top: 20px;
+        }
+
+        .top-nav a i {
+            margin-right: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-box {
+                text-align: center;
+            }
+            input[type="text"] {
+                width: 80%;
+                margin-bottom: 10px;
+            }
+            button {
+                width: 80%;
+            }
+            table, th, td {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Kikitech Supplies - Lending History</h1>
+</header>
+
+<div class="container">
+    <div class="search-box">
+        <form method="get" action="{{ url_for('lend_history') }}">
+            <input type="text" name="customer_name" value="{{ search_name }}" placeholder="Search by customer name...">
+            <button type="submit"><i class="fas fa-search"></i> Search</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date & Time</th>
+                <th>Customer Name</th>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Quantity Taken</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lend in lends %}
+            <tr>
+                <td>{{ lend.date_lent }}</td>
+                <td>{{ lend.customer_name }}</td>
+                <td>{{ lend.product_name }}</td>
+                <td>{{ lend.description }}</td>
+                <td>{{ lend.quantity_taken }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align:center;">No lending records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+   <div class="top-nav">
+    {% if session['role'] == 'admin' %}
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+    {% elif session['role'] == 'user' %}
+        <a href="{{ url_for('mydashboard') }}"><i class="fas fa-user"></i> My Dashboard</a>
+    {% endif %}
+    
+    <a href="{{ url_for('view_products') }}"><i class="fas fa-boxes"></i> View All Products</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kikitech Supplies - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Background */
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(rgba(0, 0, 40, 0.6), rgba(0, 0, 40, 0.6)), 
+                  url("{{ url_for('static', filename='back.png') }}") no-repeat center center/cover;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+    }
+
+    /* Neon card */
+    .neon-card {
+      width: 90%;
+      max-width: 420px;
+      padding: 45px 35px;
+      border-radius: 20px;
+      background: linear-gradient(160deg, #001a33, #002b4d);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      box-shadow: 0px 25px 50px rgba(0,0,0,0.6);
+      color: #fff;
+      animation: slideUp 0.9s ease forwards, floaty 6s ease-in-out infinite;
+      transform: translateY(100px);
+      opacity: 0;
+      position: relative;
+    }
+
+    /* Neon glowing border */
+    .neon-card::before {
+      content: "";
+      position: absolute;
+      inset: -3px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #00eaff, #007bff, #b400ff, #00ffd5);
+      z-index: -1;
+      background-size: 400% 400%;
+      animation: neonGlow 8s ease infinite;
+      filter: blur(2px);
+    }
+
+    /* Branding */
+    .brand-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .brand-header img {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%; /* makes it circular */
+      border: 3px solid rgba(0,255,255,0.7); /* glowing border */
+      padding: 3px;
+      animation: bounce 2s infinite;
+      filter: drop-shadow(0 0 6px rgba(0, 255, 255, 0.7));
+      background: #fff; /* ensures circular mask looks clean */
+    }
+    .brand-header h2 {
+      font-weight: bold;
+      margin: 12px 0 6px;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(0,255,255,0.6);
+      letter-spacing: 1px;
+    }
+    .slogan {
+      font-style: italic;
+      font-size: 0.9rem;
+      color: #ccefff;
+      text-shadow: 0 0 4px rgba(0,255,255,0.4);
+    }
+
+    /* Inputs */
+    .form-control {
+      border-radius: 12px;
+      padding: 12px;
+      border: none;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      transition: 0.3s;
+    }
+    .form-control::placeholder {
+      color: #e0e0e0;
+    }
+    .form-control:focus {
+      outline: none;
+      box-shadow: 0 0 12px rgba(0, 234, 255, 0.8);
+      background: rgba(255,255,255,0.15);
+    }
+
+    /* Buttons */
+    .btn-login {
+      border-radius: 12px;
+      padding: 12px;
+      width: 100%;
+      font-weight: 600;
+      border: none;
+      background: linear-gradient(135deg, #00c6ff, #007bff, #00ffd5);
+      color: #fff;
+      transition: 0.3s;
+      box-shadow: 0 8px 20px rgba(0, 200, 255, 0.4);
+    }
+    .btn-login:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #007bff, #00ffd5, #00c6ff);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
+    }
+
+    /* Links */
+    .extra-links {
+      text-align: center;
+      margin-top: 18px;
+    }
+    .extra-links a {
+      color: #e0faff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: 0.3s;
+    }
+    .extra-links a:hover {
+      color: #00ffd5;
+      text-decoration: underline;
+    }
+
+    /* Alerts */
+    .alert {
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    /* Animations */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(100px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes neonGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 480px) {
+      .neon-card {
+        padding: 30px 20px;
+      }
+      .brand-header img {
+        width: 65px;
+        height: 65px;
+      }
+      .brand-header h2 {
+        font-size: 1.3rem;
+      }
+      .slogan {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="neon-card">
+    <!-- Branding -->
+    <div class="brand-header">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Kikitech Logo">
+      <h2>Kikitech Supplies</h2>
+      <div class="slogan">“Let’s Glam Your House”</div>
+    </div>
+
+    <h4 class="text-center mb-3">Welcome Back</h4>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <input type="text" name="email_or_phone" class="form-control" placeholder="Enter email or phone" required>
+      <input type="password" name="password" class="form-control" placeholder="Password" minlength="6" required>
+
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="remember" id="remember">
+        <label class="form-check-label" for="remember" style="color:#fff;">Remember me</label>
+      </div>
+
+      <button type="submit" class="btn-login">Login</button>
+    </form>
+
+    <div class="extra-links">
+      <a href="{{ url_for('reset_password') }}">Forgot password?</a> | 
+      <a href="#" onclick="alert('Please contact the admin to create an account.')">Create Account</a>
+    </div>
+  </div>
+
+</body>
+</html>

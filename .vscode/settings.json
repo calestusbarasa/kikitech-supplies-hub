@@ -1,0 +1,6 @@
+{
+  "javascript.validate.enable": false,
+  "css.validate": false,
+  "html.validate.scripts": false,
+  "python.defaultInterpreterPath": "C:\\Users\\user\\OneDrive\\Documents\\kikitech supplies\\venv\\Scripts\\python.exe"
+}

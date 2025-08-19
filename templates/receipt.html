@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kikitech Supplies - Receipt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 12px;
+            width: 80mm;
+            margin: auto;
+            padding: 5px;
+            background: #fff;
+            color: #000;
+        }
+
+        .receipt-container {
+            text-align: center;
+        }
+
+        .company-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .slogan {
+            font-style: italic;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .dealer-line,
+        .categories {
+            font-size: 10px;
+            margin: 2px 0;
+        }
+
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 6px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        th, td {
+            padding: 2px 0;
+        }
+
+        th {
+            border-bottom: 1px dashed #000;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .buttons,
+        .receipt-actions {
+            margin-top: 12px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-icon,
+        .buttons button {
+            background-color: #222;
+            color: white;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 3px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover,
+        .buttons button:hover {
+            background-color: #000;
+        }
+
+        .btn-icon i {
+            font-size: 12px;
+        }
+
+        @media print {
+            .buttons,
+            .receipt-actions {
+                display: none;
+            }
+        }
+
+        .receipt-feedback {
+            text-align: center;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .receipt-feedback img {
+            width: 60px;
+            height: 60px;
+            margin-top: 2px;
+        }
+
+        .served-by {
+            text-align: right;
+            font-size: 11px;
+            margin-top: 6px;
+            color: #444;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- Company Info -->
+        <div class="company-name">KIKITECH SUPPLIES</div>
+        <div class="slogan">"Let's glam your house!"</div>
+        <div class="dealer-line"><strong>DEALERS IN:</strong> Electronics & Household Needs</div>
+        <div class="categories">
+            TVs • Laptops • Phones • Woofers • Fans • Fluffy Mats • Dispensers • Wardrobes • Shoe Racks • Iron Boxes • Fibre Pillows • Mosquito Nets
+        </div>
+        <div>Tel: 0796813752 / 0748919331</div>
+
+        <div class="divider"></div>
+
+        <!-- Receipt Header -->
+        <div><strong>Receipt No:</strong> RCT-{{ '%04d'|format(order.id) }}</div>
+        <div><strong>Date:</strong>
+            {% if order.sale_date %}
+                {{ order.sale_date }}
+            {% else %}
+                {{ current_time.strftime('%d %b %Y %I:%M %p') }}
+            {% endif %}
+        </div>
+        <div><strong>Customer:</strong> {{ order.customer_name or 'N/A' }}</div>
+        <div><strong>Payment Mode:</strong> {{ order.payment_mode or 'N/A' }}</div>
+
+        <div class="divider"></div>
+
+        <!-- Items Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th class="right">Qty</th>
+                    <th class="right">Price</th>
+                    <th class="right">Amt</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        {{ item['product_name'] }}
+                        {% if item['description'] %}
+                            ({{ item['description'] }})
+                        {% endif %}
+                    </td>
+                    <td class="right">{{ item['quantity'] }}</td>
+                    <td class="right">{{ '%.2f'|format(item['price']) }}</td>
+                    <td class="right">{{ '%.2f'|format(item['quantity'] * item['price']) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="divider"></div>
+
+        <!-- Total -->
+        <table>
+            <tr>
+                <td class="bold">TOTAL</td>
+                <td class="right bold">{{ '%.2f'|format(total) }}</td>
+            </tr>
+        </table>
+
+        <div class="divider"></div>
+
+        <!-- QR Feedback -->
+        <div class="receipt-feedback">
+            <p>We value your feedback! Scan below 👇</p>
+            <img src="{{ url_for('static', filename='qr_feedback.png') }}" alt="Feedback QR Code">
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>THANK YOU FOR SHOPPING WITH US!<br>Visit Again 😊</p>
+        </div>
+        <div class="served-by">Served by: <strong>{{ active_user }}</strong></div>
+
+        <!-- Buttons -->
+        <div class="buttons">
+            <button onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+            <a href="{{ url_for('receipt_pdf', order_id=order.id) }}" class="btn-icon">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+        </div>
+
+        <!-- Navigation -->
+        <div class="receipt-actions">
+            {% if session['role'] == 'admin' %}
+                <a href="{{ url_for('dashboard') }}" class="btn-icon"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            {% elif session['role'] == 'user' %}
+                <a href="{{ url_for('mydashboard') }}" class="btn-icon"><i class="fas fa-user"></i> My Dashboard</a>
+            {% endif %}
+            <a href="{{ url_for('add_order') }}" class="btn-icon"><i class="fas fa-plus-circle"></i> Add Sale</a>
+        </div>
+    </div>
+</body>
+</html>

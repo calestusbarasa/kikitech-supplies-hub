@@ -1,0 +1,505 @@
+/* === Reset & Base === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f6f9;
+  color: #333;
+  padding: 20px;
+}
+
+/* === Layout Containers === */
+.container {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 1000px;
+  margin: auto;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Home Container */
+.home-container {
+  max-width: 420px;
+  margin: 60px auto;
+  background: #ffffff;
+  padding: 30px 20px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+/* === Typography === */
+.title {
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title i {
+  margin-right: 10px;
+  color: #3498db;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* === Navigation === */
+.top-nav,
+.navigation {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.top-nav {
+  margin-bottom: 20px;
+  background-color: #f8f8f8;
+  padding: 10px;
+  text-align: right;
+}
+
+.top-nav a,
+.nav a {
+  background-color: #2ecc71;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+.top-nav a:hover {
+  text-decoration: underline;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav a:hover {
+  background-color: #27ae60;
+}
+
+/* === Menu Links === */
+.menu-links,
+.vertical-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.menu-links a,
+.vertical-nav a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #3498db;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.menu-links a i,
+.vertical-nav a i {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.menu-links a:hover,
+.vertical-nav a:hover {
+  background-color: #2980b9;
+}
+
+/* === Buttons === */
+.btn,
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3498db;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-size: 16px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn i,
+button i {
+  margin-right: 8px;
+}
+
+.btn:hover,
+button:hover {
+  background-color: #2b80b4;
+}
+
+/* === Forms === */
+form {
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+label {
+  font-weight: 500;
+  display: block;
+  margin-top: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  padding: 10px;
+  margin: 10px 0 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.product-input { width: 150px; }
+.description-input { width: 200px; }
+.qty-input,
+.price-input,
+.total-input { width: 110px; }
+
+select.product-input {
+  max-width: 200px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  margin-right: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form-actions button:hover {
+  background-color: #0056b3;
+}
+
+.total {
+  text-align: right;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+/* === Tables === */
+table,
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
+  background-color: #fff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* === Search / Filter === */
+.search-input,
+.search-box {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin: 20px 0 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* === Receipt Page === */
+.receipt {
+  max-width: 600px;
+  margin: 30px auto;
+  background-color: #fff;
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.receipt h2 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.receipt-table {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.receipt-table td,
+.receipt-table th {
+  padding: 8px 10px;
+}
+
+.receipt-summary {
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+/* === Print / PDF === */
+.pdf-button {
+  margin-top: 20px;
+  background-color: #e67e22;
+}
+
+.pdf-button:hover {
+  background-color: #cf711c;
+}
+
+/* === Alerts === */
+.alert {
+  padding: 15px;
+  background-color: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+/* === Confirm Dialog === */
+.confirm-dialog {
+  background: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirm-box {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-box button {
+  margin: 10px;
+}
+
+/* === Animations === */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Dealer Info Line === */
+.dealer-line {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .btn,
+  button,
+  .menu-links a {
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+
+  table,
+  .receipt,
+  form {
+    font-size: 15px;
+  }
+
+  .nav {
+    flex-direction: column;
+  }
+
+  .home-container {
+    margin: 20px auto;
+    padding: 20px;
+  }
+
+  .product-input,
+  .description-input,
+  .qty-input,
+  .price-input,
+  .total-input {
+    width: 100%;
+  }
+}
+
+/* === Print Receipt Width Override (only on receipt pages) === */
+@media print {
+  body.receipt-print {
+    width: 80mm;
+    padding: 0;
+    margin: 0 auto;
+    font-size: 12px;
+  }
+}
+.btn-sales {
+    background-color: #607D8B;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 5px;
+}
+
+/* =======================
+   Background Logo
+======================= */
+/* Container for animated watermark at bottom */
+.animated-watermark {
+  position: fixed;
+  bottom: 20px; /* slightly above bottom */
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Continuous horizontal marquee keyframes */
+@keyframes bottomMarquee {
+  0%   { transform: translateX(-100%); opacity: 0.05; }
+  10%  { opacity: 0.1; transform: translateX(-80%); }
+  50%  { transform: translateX(50%); opacity: 0.15; transform: scale(1.05); }
+  90%  { opacity: 0.1; transform: translateX(120%); }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* Title styling */
+.watermark-item.title {
+  font-size: 60px;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #ff4d6d, #ff7e5f, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(255,125,100,0.3);
+  animation: bottomMarquee 12s linear infinite;
+  animation-delay: 0s;
+  white-space: nowrap;
+  margin-right: 50px;
+}
+
+/* Slogan styling */
+.watermark-item.slogan {
+  font-size: 45px;
+  font-style: italic;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: linear-gradient(90deg, #4dd0ff, #00bcd4, #1de9b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 8px rgba(77,208,255,0.2);
+  animation: bottomMarquee 12s linear infinite;
+  animation-delay: 4s;
+  white-space: nowrap;
+  margin-right: 50px;
+}
+
+/* Logo styling */
+.watermark-item.logo {
+  width: 120px;
+  opacity: 0.1;
+  filter: brightness(100%);
+  animation: bottomMarquee 12s linear infinite;
+  animation-delay: 8s;
+  margin-right: 50px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1200px) {
+  .watermark-item.title { font-size: 50px; }
+  .watermark-item.slogan { font-size: 35px; }
+  .watermark-item.logo { width: 100px; }
+}
+
+@media screen and (max-width: 768px) {
+  .watermark-item.title { font-size: 40px; }
+  .watermark-item.slogan { font-size: 25px; }
+  .watermark-item.logo { width: 80px; }
+}
+
+@media screen and (max-width: 480px) {
+  .watermark-item.title { font-size: 28px; }
+  .watermark-item.slogan { font-size: 18px; }
+  .watermark-item.logo { width: 60px; }
+}
+/* Receipt QR Feedback Section */
+.receipt-feedback {
+  text-align: center;
+  font-size: 10px; /* small and readable */
+  margin-top: 5px;
+}
+
+.receipt-feedback img {
+  width: 40px;   /* compact QR size */
+  height: 40px;
+  margin-top: 2px;
+  filter: brightness(0.8); /* subtle */
+}
+

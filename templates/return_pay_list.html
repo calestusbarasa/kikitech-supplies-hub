@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ action_type.capitalize() }} - {{ customer_name }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #f0f4f8);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #28a745, #198754);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .customer-info {
+            font-size: 18px;
+            margin-bottom: 25px;
+            background: #e6f4ea;
+            padding: 15px 20px;
+            border-left: 6px solid #28a745;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #28a745, #198754);
+            color: white;
+            padding: 15px;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            background: #fafafa;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        tr:nth-child(even) td {
+            background: #f4f7f6;
+        }
+
+        tr:hover td {
+            background: #e0f7ea;
+            transform: scale(1.01);
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            border-color: #198754;
+            outline: none;
+            box-shadow: 0 0 8px rgba(25, 135, 84, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #28a745, #198754);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #198754, #28a745);
+            transform: scale(1.05);
+        }
+
+        .no-items {
+            text-align: center;
+            padding: 25px;
+            background: #fff8e1;
+            border-radius: 8px;
+            border: 1px solid #ffe58f;
+            font-size: 16px;
+            color: #8c6d1f;
+            font-weight: 600;
+        }
+
+        .back-link, .top-nav a {
+            display: inline-block;
+            margin: 10px 8px 0 0;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(135deg, #0d6efd, #084298);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .back-link:hover, .top-nav a:hover {
+            background: linear-gradient(135deg, #084298, #0d6efd);
+            transform: translateY(-2px);
+        }
+
+        .top-nav {
+            margin-top: 20px;
+        }
+
+        .top-nav a i {
+            margin-right: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            table, th, td {
+                font-size: 14px;
+            }
+            input[type="number"] {
+                width: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            header {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>Kikitech Supplies - {{ action_type.capitalize() }} for {{ customer_name }}</header>
+
+<div class="container">
+    <div class="customer-info">
+        <strong>Customer:</strong> {{ customer_name }} <br>
+        <strong>Action:</strong> {{ action_type.capitalize() }}
+    </div>
+
+    {% if items %}
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Description</th>
+                <th>Quantity Lent</th>
+                <th>Process</th>
+            </tr>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity_taken }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('process_return_pay', lending_id=item.id) }}">
+                        <input type="hidden" name="action_type" value="{{ action_type }}">
+                        <input type="number" name="quantity" min="1" max="{{ item.quantity_taken }}" required>
+                        <button type="submit"><i class="fas fa-check"></i> {{ action_type.capitalize() }}</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div class="no-items">
+            No items found for this customer.
+        </div>
+    {% endif %}
+
+  <div class="top-nav">
+    {% if session['role'] == 'admin' %}
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+    {% elif session['role'] == 'user' %}
+        <a href="{{ url_for('mydashboard') }}"><i class="fas fa-user"></i> My Dashboard</a>
+    {% endif %}
+    
+    <a href="{{ url_for('view_products') }}"><i class="fas fa-boxes"></i> View All Products</a>
+</div>
+
+</body>
+</html>

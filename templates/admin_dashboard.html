@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Branding header */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .brand-header img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%; /* circular logo */
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        .brand-header h2 {
+            font-weight: bold;
+            margin: 5px 0;
+            color: #0d6efd;
+            letter-spacing: 1px;
+        }
+        .slogan {
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* Page heading */
+        .page-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+
+    <!-- Branding -->
+    <div class="brand-header">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Kikitech Logo">
+        <h2>Kikitech Supplies</h2>
+        <div class="slogan">“Let’s Glam Your House”</div>
+    </div>
+
+    <!-- Page title -->
+    <h3 class="page-title">Admin Dashboard</h3>
+
+    <!-- Show Create New User button only for admins -->
+    {% if session.get('role') == 'admin' %}
+        <a href="{{ url_for('create_user') }}" class="btn btn-success mb-3">Create New User</a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary mb-3">Go to Dashboard</a>
+    {% endif %}
+
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Locked</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.phone_number }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ 'Yes' if user.is_locked else 'No' }}</td>
+                <td>{{ 'Yes' if user.is_active else 'No' }}</td>
+                <td>
+                    <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="{{ url_for('toggle_lock', user_id=user.id) }}" class="btn btn-sm btn-warning">
+                        {{ 'Unlock' if user.is_locked else 'Lock' }}
+                    </a>
+                    <a href="{{ url_for('force_reset', user_id=user.id) }}" class="btn btn-sm btn-info">Reset Password</a>
+                    <a href="{{ url_for('toggle_active', user_id=user.id) }}" class="btn btn-sm btn-secondary">
+                        {{ 'Deactivate' if user.is_active else 'Reactivate' }}
+                    </a>
+                    <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

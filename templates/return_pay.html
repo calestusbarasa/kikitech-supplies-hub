@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Return or Pay - Kikitech Supplies</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #f0f4f8);
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0d6efd, #084298);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 500px;
+            background: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin: 15px 0 8px;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #0d6efd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: #084298;
+            outline: none;
+            box-shadow: 0 0 8px rgba(8, 66, 152, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #0d6efd, #084298);
+            color: white;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #084298, #0d6efd);
+            transform: translateY(-2px);
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(135deg, #6c757d, #495057);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        a:hover {
+            background: linear-gradient(135deg, #495057, #6c757d);
+            transform: translateY(-2px);
+        }
+
+        a i {
+            margin-right: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 30px 15px;
+            }
+
+            button, a {
+                font-size: 15px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>Kikitech Supplies - Return or Pay</header>
+
+<div class="container">
+    <form method="post">
+        <label>Action:</label>
+        <select name="action_type">
+            <option value="return">Return</option>
+            <option value="pay">Pay</option>
+        </select>
+
+        <label>Customer Name:</label>
+        <input type="text" name="customer_name" placeholder="Enter customer name..." required>
+
+        <button type="submit"><i class="fas fa-search"></i> Search</button>
+    </form>
+
+   <div class="top-nav">
+    {% if session['role'] == 'admin' %}
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+    {% elif session['role'] == 'user' %}
+        <a href="{{ url_for('mydashboard') }}"><i class="fas fa-user"></i> My Dashboard</a>
+    {% endif %}
+    
+    <a href="{{ url_for('view_products') }}"><i class="fas fa-boxes"></i> View All Products</a>
+</div>
+
+</body>
+</html>
